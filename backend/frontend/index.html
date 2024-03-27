@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Data Display</title>
+</head>
+<body>
+<h3>Extracted data from CHIS</h3>
+<div id="jsonData"></div>
+
+<script>
+  // Function to fetch JSON data from the server and display it
+  async function fetchData() {
+    try {
+      const response = await fetch('http://localhost:3000/fetch'); // Replace 'http://localhost:3000/fetch' with your actual endpoint
+      const jsonData = await response.json();
+
+      // Display the JSON data
+      displayJsonData(jsonData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  // Function to format and display JSON data
+  function displayJsonData(jsonData) {
+    var jsonDataHtml = '';
+
+    // Iterate over each object in the JSON array
+    jsonData.forEach(function(item) {
+      jsonDataHtml += '<h2>ID: ' + item.id + '</h2>';
+      jsonDataHtml += '<table border="1">';
+      var data = item.data;
+      for (var key in data) {
+        jsonDataHtml += '<tr>';
+        jsonDataHtml += '<td><strong>' + key + '</strong></td>';
+        if (typeof data[key] === 'object') {
+          jsonDataHtml += '<td>';
+          for (var subKey in data[key]) {
+            jsonDataHtml += subKey + ': ' + data[key][subKey] + '<br>';
+          }
+          jsonDataHtml += '</td>';
+        } else {
+          jsonDataHtml += '<td>' + data[key] + '</td>';
+        }
+        jsonDataHtml += '</tr>';
+      }
+      jsonDataHtml += '</table>';
+    });
+
+    document.getElementById('jsonData').innerHTML = jsonDataHtml;
+  }
+
+  // Call the fetchData function when the page loads
+  window.onload = fetchData;
+</script>
+</body>
+</html>
