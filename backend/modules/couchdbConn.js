@@ -7,19 +7,18 @@ const url = "http://medic:password@localhost:5984";
 // Create a Nano instance with the URL
 const nanoInstance = nano(url);
 
-// Function to connect to CouchDB and fetch all documents with their IDs
-const fetchAllDataWithIds = async () => {
+// Function to connect to CouchDB and fetch up to 200 documents with their IDs
+const fetchDocuments = async () => {
     try {
         // Specify the name of the database (table) you want to access
         const dbName = "medic";
-
         // Use the specified database
         const db = nanoInstance.db.use(dbName);
         console.log("Connected successfully to database:", dbName);
 
-        // Fetch all documents with their IDs
-        const allDocs = await new Promise((resolve, reject) => {
-            db.list({ include_docs: true }, (err, body) => {
+        // Fetch up to 200 documents with their IDs
+        const response = await new Promise((resolve, reject) => {
+            db.list({ include_docs: true, limit: 200 }, (err, body) => {
                 if (err) {
                     console.error("Error fetching documents:", err);
                     reject(err);
@@ -29,7 +28,7 @@ const fetchAllDataWithIds = async () => {
             });
         });
 
-        return allDocs;
+        return response;
     } catch (error) {
         // Handle any errors that occur during connection or data fetching
         console.error("Error:", error);
@@ -37,4 +36,4 @@ const fetchAllDataWithIds = async () => {
     }
 };
 
-module.exports = fetchAllDataWithIds;
+module.exports = fetchDocuments;
